@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/Controller/user_controller/user_controller.dart';
-import 'package:ride_sharing/Screens/auth_screen/singIn_screen.dart';
+import 'package:ride_sharing/Screens/auth_screen/login.dart';
 import 'package:ride_sharing/models/user.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 ///
 /// This is the class for the registration screen.
@@ -24,16 +23,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final UserController _userController = UserController();
 
   ///
-  /// Saves the authentication token to shared preferences for persistent storage.
-  ///
-  /// [token] - The token string to be saved.
-  ///
-  Future<void> _saveToken(String token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
-  }
-
-  ///
   /// Handles the registration process by collecting input from text fields,
   /// invoking the register method from UserController, and navigating to
   /// the LoginScreen upon successful registration.
@@ -47,16 +36,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     try {
       final isRegistered = await _userController.register(user); // Attempts registration
+
       if (isRegistered) {
-        // If you receive a token after registration, you can save it
-        // Here, assume the token is obtained after successful registration
-        // This token might come from the server response
-        String token = "some_token"; // Replace with actual token if available
-        await _saveToken(token); // Saves the token if registration is successful
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Registration Successful')), // Displays success message
         );
-        Get.off(LoginScreen()); // Redirects to login screen after registration
+        Get.off(LoginScreen()); // Redirects to SignInScreen after registration
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Registration Failed')), // Displays failure message
@@ -80,6 +65,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             TextField(
               controller: _emailController, // Controller for email input
               decoration: InputDecoration(labelText: 'Email'), // Label for the email field
+              keyboardType: TextInputType.emailAddress, // Ensure correct keyboard type
             ),
             TextField(
               controller: _passwordController, // Controller for password input
@@ -90,6 +76,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ElevatedButton(
               onPressed: _register, // Calls _register function when pressed
               child: Text('Register'),
+            ),
+            TextButton(
+              onPressed: () {
+                Get.to(LoginScreen()); // Navigate to SignInScreen if the user already has an account
+              },
+              child: Text('Already have an account? Sign In'),
             ),
           ],
         ),

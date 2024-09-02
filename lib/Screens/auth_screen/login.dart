@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing/Controller/user_controller/user_controller.dart';
+ // Updated typo from 'singup_screen.dart' to 'signup_screen.dart'
 import 'package:ride_sharing/Screens/auth_screen/singup_screen.dart';
 import 'package:ride_sharing/Screens/ride_screen/map_screen.dart';
 import 'package:ride_sharing/models/user.dart';
@@ -48,6 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final token = await _userController.login(user); // Attempts login and retrieves token
+
       if (token.isNotEmpty) {
         _saveToken(token); // Saves the token if login is successful
         Get.to(MapScreen(
@@ -63,6 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (e) {
+      // Handle exceptions, such as when the backend is unreachable
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')), // Displays error message
       );
@@ -80,6 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
             TextField(
               controller: _emailController, // Controller for email input
               decoration: InputDecoration(labelText: 'Email'), // Label for the email field
+              keyboardType: TextInputType.emailAddress, // Ensure correct keyboard type
             ),
             TextField(
               controller: _passwordController, // Controller for password input

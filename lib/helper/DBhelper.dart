@@ -43,11 +43,15 @@ class DBHelper {
   /// If a user with the same email already exists, it will be replaced.
   Future<void> insertUser(User user) async {
     final db = await database;
-    await db.insert(
-      'users',
-      user.toJson(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    try {
+      await db.insert(
+        'users',
+        user.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } catch (e) {
+      print('Error inserting user: $e'); // Logging error
+    }
   }
 
   /// Retrieves a user from the database by email.
@@ -56,15 +60,20 @@ class DBHelper {
   /// Returns a [User] object if a user with the given email is found, otherwise returns `null`.
   Future<User?> getUser(String email) async {
     final db = await database;
-    final maps = await db.query(
-      'users',
-      where: "email = ?",
-      whereArgs: [email],
-    );
+    try {
+      final maps = await db.query(
+        'users',
+        where: "email = ?",
+        whereArgs: [email],
+      );
 
-    if (maps.isNotEmpty) {
-      return User.fromJson(maps.first);
-    } else {
+      if (maps.isNotEmpty) {
+        return User.fromJson(maps.first);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error retrieving user: $e'); // Logging error
       return null;
     }
   }
@@ -75,11 +84,15 @@ class DBHelper {
   /// The user is identified by their email.
   Future<void> updateUser(User user) async {
     final db = await database;
-    await db.update(
-      'users',
-      user.toJson(),
-      where: "email = ?",
-      whereArgs: [user.email],
-    );
+    try {
+      await db.update(
+        'users',
+        user.toJson(),
+        where: "email = ?",
+        whereArgs: [user.email],
+      );
+    } catch (e) {
+      print('Error updating user: $e'); // Logging error
+    }
   }
 }
